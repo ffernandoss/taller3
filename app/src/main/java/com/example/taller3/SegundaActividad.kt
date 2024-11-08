@@ -43,6 +43,7 @@ fun SegundaPantalla() {
     var showUserExistsDialog by remember { mutableStateOf(false) }
     var backgroundColor by remember { mutableStateOf(Color(sharedPreferences.getInt("background_color", Color.White.toArgb()))) }
 
+    // Load all users from the database when the composable is first launched
     LaunchedEffect(Unit) {
         users.addAll(dbHelper.getAllUsers())
     }
@@ -53,6 +54,7 @@ fun SegundaPantalla() {
             .background(backgroundColor)
             .padding(16.dp)
     ) {
+        // TextField to input the user's name
         TextField(
             value = name,
             onValueChange = { name = it },
@@ -61,6 +63,7 @@ fun SegundaPantalla() {
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
+        // Button to save the user's name and background color to the database
         Button(
             onClick = {
                 if (dbHelper.userExists(name)) {
@@ -79,12 +82,14 @@ fun SegundaPantalla() {
         ) {
             Text("Guardar Nombre")
         }
+        // Display the saved name
         Text(
             text = "Nombre guardado: $savedName",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
+        // Button to show the dialog for deleting a user
         Button(
             onClick = {
                 showDialog = true
@@ -93,6 +98,7 @@ fun SegundaPantalla() {
         ) {
             Text("Borrar Usuario de SQLite")
         }
+        // Button to navigate to AjustesActividad
         Button(
             onClick = {
                 context.startActivity(Intent(context, AjustesActividad::class.java))
@@ -104,6 +110,7 @@ fun SegundaPantalla() {
             Text("Ir a Ajustes")
         }
         Spacer(modifier = Modifier.height(16.dp))
+        // Display the list of users saved in SQLite
         Text("Usuarios guardados en SQLite:", modifier = Modifier.padding(bottom = 8.dp))
         users.forEach { (user, color, colorName) ->
             Row(
@@ -123,6 +130,7 @@ fun SegundaPantalla() {
         }
     }
 
+    // Dialog to confirm user deletion
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -160,6 +168,7 @@ fun SegundaPantalla() {
         )
     }
 
+    // Dialog to show when the user to be deleted is not found
     if (showNotFoundDialog) {
         AlertDialog(
             onDismissRequest = { showNotFoundDialog = false },
@@ -173,6 +182,7 @@ fun SegundaPantalla() {
         )
     }
 
+    // Dialog to show when the user already exists
     if (showUserExistsDialog) {
         AlertDialog(
             onDismissRequest = { showUserExistsDialog = false },
@@ -186,6 +196,7 @@ fun SegundaPantalla() {
         )
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun SegundaPantallaPreview() {

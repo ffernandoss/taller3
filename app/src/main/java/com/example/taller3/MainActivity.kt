@@ -25,7 +25,7 @@ import java.util.*
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        enableEdgeToEdge() // Enable edge-to-edge display
         setContent {
             Taller3Theme {
                 val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
@@ -48,6 +48,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    // Function to get a greeting message based on the current time
     private fun getGreetingMessage(): String {
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         return when (hour) {
