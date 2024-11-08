@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -105,7 +106,16 @@ fun SegundaPantalla() {
         Spacer(modifier = Modifier.height(16.dp))
         Text("Usuarios guardados en SQLite:", modifier = Modifier.padding(bottom = 8.dp))
         users.forEach { (user, color, colorName) ->
-            Row(modifier = Modifier.padding(bottom = 4.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 4.dp)
+                    .clickable {
+                        name = user
+                        backgroundColor = Color(color)
+                        sharedPreferences.edit().putInt("background_color", color).apply()
+                    }
+            ) {
                 Text(text = user, modifier = Modifier.weight(1f))
                 Box(modifier = Modifier.size(24.dp).background(Color(color)))
                 Text(text = colorName, modifier = Modifier.padding(start = 8.dp))
@@ -176,7 +186,6 @@ fun SegundaPantalla() {
         )
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun SegundaPantallaPreview() {
