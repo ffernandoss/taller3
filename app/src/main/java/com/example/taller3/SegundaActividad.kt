@@ -43,7 +43,7 @@ fun SegundaPantalla() {
     var showUserExistsDialog by remember { mutableStateOf(false) }
     var backgroundColor by remember { mutableStateOf(Color(sharedPreferences.getInt("background_color", Color.White.toArgb()))) }
 
-    // Load all users from the database when the composable is first launched
+    // Cargar todos los usuarios de la base de datos cuando el composable se lanza por primera vez
     LaunchedEffect(Unit) {
         users.addAll(dbHelper.getAllUsers())
     }
@@ -54,7 +54,7 @@ fun SegundaPantalla() {
             .background(backgroundColor)
             .padding(16.dp)
     ) {
-        // TextField to input the user's name
+        // TextField para ingresar el nombre del usuario
         TextField(
             value = name,
             onValueChange = { name = it },
@@ -63,7 +63,7 @@ fun SegundaPantalla() {
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
-        // Button to save the user's name and background color to the database
+        // Botón para guardar el nombre del usuario y el color de fondo en la base de datos
         Button(
             onClick = {
                 if (dbHelper.userExists(name)) {
@@ -82,14 +82,14 @@ fun SegundaPantalla() {
         ) {
             Text("Guardar Nombre")
         }
-        // Display the saved name
+        // Mostrar el nombre guardado
         Text(
             text = "Nombre guardado: $savedName",
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
-        // Button to show the dialog for deleting a user
+        // Botón para mostrar el diálogo para eliminar un usuario
         Button(
             onClick = {
                 showDialog = true
@@ -98,7 +98,7 @@ fun SegundaPantalla() {
         ) {
             Text("Borrar Usuario de SQLite")
         }
-        // Button to navigate to AjustesActividad
+        // Botón para navegar a AjustesActividad
         Button(
             onClick = {
                 context.startActivity(Intent(context, AjustesActividad::class.java))
@@ -110,7 +110,7 @@ fun SegundaPantalla() {
             Text("Ir a Ajustes")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        // Display the list of users saved in SQLite
+        // Mostrar la lista de usuarios guardados en SQLite
         Text("Usuarios guardados en SQLite:", modifier = Modifier.padding(bottom = 8.dp))
         users.forEach { (user, color, colorName) ->
             Row(
@@ -130,7 +130,7 @@ fun SegundaPantalla() {
         }
     }
 
-    // Dialog to confirm user deletion
+    // Diálogo para confirmar la eliminación del usuario
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -168,7 +168,7 @@ fun SegundaPantalla() {
         )
     }
 
-    // Dialog to show when the user to be deleted is not found
+    // Diálogo para mostrar cuando el usuario a eliminar no se encuentra
     if (showNotFoundDialog) {
         AlertDialog(
             onDismissRequest = { showNotFoundDialog = false },
@@ -182,7 +182,7 @@ fun SegundaPantalla() {
         )
     }
 
-    // Dialog to show when the user already exists
+    // Diálogo para mostrar cuando el usuario ya existe
     if (showUserExistsDialog) {
         AlertDialog(
             onDismissRequest = { showUserExistsDialog = false },

@@ -7,60 +7,60 @@ import android.database.sqlite.SQLiteOpenHelper
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
-// Database helper class for managing user data
+// Clase de ayuda para la base de datos para gestionar los datos de los usuarios
 class UserDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
-    // Called when the database is created for the first time
+    // Se llama cuando la base de datos se crea por primera vez
     override fun onCreate(db: SQLiteDatabase) {
-        db.execSQL(CREATE_TABLE) // Create the users table
+        db.execSQL(CREATE_TABLE) // Crear la tabla de usuarios
     }
 
-    // Called when the database needs to be upgraded
+    // Se llama cuando la base de datos necesita ser actualizada
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME") // Drop the old table if it exists
-        onCreate(db) // Create a new table
+        db.execSQL("DROP TABLE IF EXISTS $TABLE_NAME") // Eliminar la tabla antigua si existe
+        onCreate(db) // Crear una nueva tabla
     }
 
-    // Insert a new user into the database
+    // Insertar un nuevo usuario en la base de datos
     fun insertUser(name: String, color: Int) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_NAME, name) // Add the user's name
-            put(COLUMN_COLOR, color) // Add the user's color
+            put(COLUMN_NAME, name) // Añadir el nombre del usuario
+            put(COLUMN_COLOR, color) // Añadir el color del usuario
         }
-        db.insert(TABLE_NAME, null, values) // Insert the values into the table
-        db.close() // Close the database
+        db.insert(TABLE_NAME, null, values) // Insertar los valores en la tabla
+        db.close() // Cerrar la base de datos
     }
 
-    // Update the color of an existing user
+    // Actualizar el color de un usuario existente
     fun updateUserColor(name: String, color: Int) {
         val db = this.writableDatabase
         val values = ContentValues().apply {
-            put(COLUMN_COLOR, color) // Update the user's color
+            put(COLUMN_COLOR, color) // Actualizar el color del usuario
         }
-        db.update(TABLE_NAME, values, "$COLUMN_NAME = ?", arrayOf(name)) // Update the table
-        db.close() // Close the database
+        db.update(TABLE_NAME, values, "$COLUMN_NAME = ?", arrayOf(name)) // Actualizar la tabla
+        db.close() // Cerrar la base de datos
     }
 
-    // Get the color of a user by their name
+    // Obtener el color de un usuario por su nombre
     fun getUserColor(name: String): Int {
         val db = this.readableDatabase
         val cursor = db.query(TABLE_NAME, arrayOf(COLUMN_COLOR), "$COLUMN_NAME = ?", arrayOf(name), null, null, null)
         val color = if (cursor.moveToFirst()) cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_COLOR)) else Color.White.toArgb()
-        cursor.close() // Close the cursor
-        db.close() // Close the database
-        return color // Return the user's color
+        cursor.close() // Cerrar el cursor
+        db.close() // Cerrar la base de datos
+        return color // Devolver el color del usuario
     }
 
-    // Get a list of all users in the database
+    // Obtener una lista de todos los usuarios en la base de datos
     fun getAllUsers(): List<Triple<String, Int, String>> {
         val db = this.readableDatabase
         val cursor = db.query(TABLE_NAME, arrayOf(COLUMN_NAME, COLUMN_COLOR), null, null, null, null, null)
         val users = mutableListOf<Triple<String, Int, String>>()
         with(cursor) {
             while (moveToNext()) {
-                val name = getString(getColumnIndexOrThrow(COLUMN_NAME)) // Get the user's name
-                val color = getInt(getColumnIndexOrThrow(COLUMN_COLOR)) // Get the user's color
+                val name = getString(getColumnIndexOrThrow(COLUMN_NAME)) // Obtener el nombre del usuario
+                val color = getInt(getColumnIndexOrThrow(COLUMN_COLOR)) // Obtener el color del usuario
                 val colorName = when (color) {
                     Color.Red.toArgb() -> "Rojo"
                     Color.Green.toArgb() -> "Verde"
@@ -68,40 +68,40 @@ class UserDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
                     Color.Yellow.toArgb() -> "Amarillo"
                     else -> "Desconocido"
                 }
-                users.add(Triple(name, color, colorName)) // Add the user to the list
+                users.add(Triple(name, color, colorName)) // Añadir el usuario a la lista
             }
         }
-        cursor.close() // Close the cursor
-        db.close() // Close the database
-        return users // Return the list of users
+        cursor.close() // Cerrar el cursor
+        db.close() // Cerrar la base de datos
+        return users // Devolver la lista de usuarios
     }
 
-    // Check if a user exists in the database
+    // Comprobar si un usuario existe en la base de datos
     fun userExists(name: String): Boolean {
         val db = this.readableDatabase
         val cursor = db.query(TABLE_NAME, arrayOf(COLUMN_NAME), "$COLUMN_NAME = ?", arrayOf(name), null, null, null)
-        val exists = cursor.count > 0 // Check if the user exists
-        cursor.close() // Close the cursor
-        db.close() // Close the database
-        return exists // Return whether the user exists
+        val exists = cursor.count > 0 // Comprobar si el usuario existe
+        cursor.close() // Cerrar el cursor
+        db.close() // Cerrar la base de datos
+        return exists // Devolver si el usuario existe
     }
 
-    // Delete a user from the database
+    // Eliminar un usuario de la base de datos
     fun deleteUser(name: String) {
         val db = this.writableDatabase
-        db.delete(TABLE_NAME, "$COLUMN_NAME = ?", arrayOf(name)) // Delete the user
-        db.close() // Close the database
+        db.delete(TABLE_NAME, "$COLUMN_NAME = ?", arrayOf(name)) // Eliminar el usuario
+        db.close() // Cerrar la base de datos
     }
 
     companion object {
-        private const val DATABASE_NAME = "user.db" // Database name
-        private const val DATABASE_VERSION = 2 // Database version
-        private const val TABLE_NAME = "users" // Table name
-        private const val COLUMN_ID = "id" // Column for user ID
-        private const val COLUMN_NAME = "name" // Column for user name
-        private const val COLUMN_COLOR = "color" // Column for user color
+        private const val DATABASE_NAME = "user.db" // Nombre de la base de datos
+        private const val DATABASE_VERSION = 2 // Versión de la base de datos
+        private const val TABLE_NAME = "users" // Nombre de la tabla
+        private const val COLUMN_ID = "id" // Columna para el ID del usuario
+        private const val COLUMN_NAME = "name" // Columna para el nombre del usuario
+        private const val COLUMN_COLOR = "color" // Columna para el color del usuario
 
-        // SQL statement to create the users table
+        // Sentencia SQL para crear la tabla de usuarios
         private const val CREATE_TABLE = "CREATE TABLE $TABLE_NAME (" +
                 "$COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "$COLUMN_NAME TEXT," +

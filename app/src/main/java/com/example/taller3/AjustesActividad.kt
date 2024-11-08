@@ -35,7 +35,7 @@ fun AjustesPantalla() {
     val savedColor = sharedPreferences.getInt("background_color", Color.White.toArgb())
     var backgroundColor by remember { mutableStateOf(Color(savedColor)) }
 
-    // Function to save the selected color to SharedPreferences
+    // Función para guardar el color seleccionado en SharedPreferences
     fun saveColor(color: Color) {
         with(sharedPreferences.edit()) {
             putInt("background_color", color.toArgb())
@@ -58,23 +58,23 @@ fun AjustesPantalla() {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            // Button to select Red color
+            // Botón para seleccionar el color rojo
             Button(onClick = { saveColor(Color.Red) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
             ) {
                 Text("Rojo")
             }
-            // Button to select Green color
+            // Botón para seleccionar el color verde
             Button(onClick = { saveColor(Color.Green) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) {
                 Text("Verde")
             }
-            // Button to select Blue color
+            // Botón para seleccionar el color azul
             Button(onClick = { saveColor(Color.Blue) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)) {
                 Text("Azul")
             }
-            // Button to select Yellow color
+            // Botón para seleccionar el color amarillo
             Button(onClick = { saveColor(Color.Yellow) },
                 colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)) {
                 Text("Amarillo")
@@ -83,7 +83,7 @@ fun AjustesPantalla() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Button to navigate back to SegundaActividad
+        // Botón para navegar de vuelta a SegundaActividad
         Button(
             onClick = {
                 val intent = Intent(context, SegundaActividad::class.java)
