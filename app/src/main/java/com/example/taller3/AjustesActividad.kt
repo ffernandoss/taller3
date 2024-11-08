@@ -36,7 +36,7 @@ class AjustesActividad : ComponentActivity() {
 fun AjustesActividadContent(padding: PaddingValues) {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    var backgroundColor by remember { mutableStateOf(Color.White) }
+    var backgroundColor by remember { mutableStateOf(Color(sharedPreferences.getInt("background_color", Color.White.toArgb()))) }
 
     Column(
         modifier = Modifier

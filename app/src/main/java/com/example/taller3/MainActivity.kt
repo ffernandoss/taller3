@@ -1,16 +1,21 @@
 package com.example.taller3
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -23,7 +28,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Taller3Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                val sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+                val backgroundColor = remember { Color(sharedPreferences.getInt("background_color", Color.White.toArgb())) }
+                Scaffold(modifier = Modifier.fillMaxSize().background(backgroundColor)) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .fillMaxSize()

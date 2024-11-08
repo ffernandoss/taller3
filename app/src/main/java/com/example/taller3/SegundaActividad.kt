@@ -36,6 +36,12 @@ fun SegundaActividadContent(padding: PaddingValues) {
     var name by remember { mutableStateOf("") }
     var savedName by remember { mutableStateOf("") }
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
+    val dbHelper = UserDatabaseHelper(context)
+    val users = remember { mutableStateListOf<String>() }
+
+    LaunchedEffect(Unit) {
+        users.addAll(dbHelper.getAllUsers())
+    }
 
     Column(
         modifier = Modifier
@@ -63,10 +69,14 @@ fun SegundaActividadContent(padding: PaddingValues) {
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
         )
         Button(
-            onClick = { /* De momento no hace nada */ },
+            onClick = {
+                dbHelper.insertUser(name)
+                users.clear()
+                users.addAll(dbHelper.getAllUsers())
+            },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Guardar")
+            Text("Guardar Datos del Usuario en SQLite")
         }
         Button(
             onClick = {
@@ -75,6 +85,11 @@ fun SegundaActividadContent(padding: PaddingValues) {
             modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
         ) {
             Text("Ir a Ajustes")
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Usuarios guardados en SQLite:", modifier = Modifier.padding(bottom = 8.dp))
+        users.forEach { user ->
+            Text(text = user, modifier = Modifier.padding(bottom = 4.dp))
         }
     }
 }
