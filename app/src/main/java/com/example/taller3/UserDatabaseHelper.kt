@@ -37,6 +37,11 @@ class UserDatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_
         db.close()
         return users
     }
+    fun deleteUser(name: String) {
+        val db = this.writableDatabase
+        db.delete(TABLE_NAME, "$COLUMN_NAME = ?", arrayOf(name))
+        db.close()
+    }
 
     companion object {
         private const val DATABASE_NAME = "user.db"

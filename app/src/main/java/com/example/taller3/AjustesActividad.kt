@@ -7,9 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Button
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,69 +22,78 @@ class AjustesActividad : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Taller3Theme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AjustesActividadContent(innerPadding)
-                }
+                AjustesPantalla()
             }
         }
     }
 }
 
 @Composable
-fun AjustesActividadContent(padding: PaddingValues) {
+fun AjustesPantalla() {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    var backgroundColor by remember { mutableStateOf(Color(sharedPreferences.getInt("background_color", Color.White.toArgb()))) }
+    val savedColor = sharedPreferences.getInt("background_color", Color.White.toArgb())
+    var backgroundColor by remember { mutableStateOf(Color(savedColor)) }
+
+    fun saveColor(color: Color) {
+        with(sharedPreferences.edit()) {
+            putInt("background_color", color.toArgb())
+            apply()
+        }
+        backgroundColor = color
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(padding)
-            .padding(16.dp)
             .background(backgroundColor)
+            .padding(16.dp)
     ) {
-        Text("Seleccione el color de fondo:", modifier = Modifier.padding(bottom = 16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            ColorButton(Color.Red, "Rojo") { color ->
-                backgroundColor = color
-                sharedPreferences.edit().putInt("background_color", color.toArgb()).apply()
+        Text("Seleccione el color de fondo:", style = MaterialTheme.typography.bodyLarge)
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Button(onClick = { saveColor(Color.Red) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Red)
+            ) {
+                Text("Rojo")
             }
-            ColorButton(Color.Green, "Verde") { color ->
-                backgroundColor = color
-                sharedPreferences.edit().putInt("background_color", color.toArgb()).apply()
+            Button(onClick = { saveColor(Color.Green) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Green)) {
+                Text("Verde")
             }
-            ColorButton(Color.Blue, "Azul") { color ->
-                backgroundColor = color
-                sharedPreferences.edit().putInt("background_color", color.toArgb()).apply()
+            Button(onClick = { saveColor(Color.Blue) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)) {
+                Text("Azul")
+            }
+            Button(onClick = { saveColor(Color.Yellow) },
+                colors = ButtonDefaults.buttonColors(containerColor = Color.Yellow)) {
+                Text("Amarillo")
             }
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Button(
             onClick = {
-                context.startActivity(Intent(context, SegundaActividad::class.java))
+                val intent = Intent(context, SegundaActividad::class.java)
+                context.startActivity(intent)
             },
-            modifier = Modifier.fillMaxWidth().padding(top = 16.dp)
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text("Volver a Segunda Actividad")
         }
     }
 }
 
-@Composable
-fun ColorButton(color: Color, label: String, onClick: (Color) -> Unit) {
-    Button(
-        onClick = { onClick(color) },
-        modifier = Modifier
-            .size(50.dp)
-            .background(color)
-    ) {
-        Text(label, color = Color.White)
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
-fun AjustesActividadPreview() {
+fun AjustesPantallaPreview() {
     Taller3Theme {
-        AjustesActividadContent(PaddingValues())
+        AjustesPantalla()
     }
 }
