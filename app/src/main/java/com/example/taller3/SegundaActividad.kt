@@ -27,19 +27,20 @@ class SegundaActividad : ComponentActivity() {
         }
     }
 }
+
 @Composable
 fun SegundaPantalla() {
     val context = LocalContext.current
     val sharedPreferences = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    val savedColor = sharedPreferences.getInt("background_color", Color.White.toArgb())
-    var backgroundColor by remember { mutableStateOf(Color(savedColor)) }
     var name by remember { mutableStateOf("") }
     var savedName by remember { mutableStateOf("") }
     val dbHelper = UserDatabaseHelper(context)
-    val users = remember { mutableStateListOf<String>() }
+    val users = remember { mutableStateListOf<Triple<String, Int, String>>() }
     var showDialog by remember { mutableStateOf(false) }
     var deleteName by remember { mutableStateOf("") }
     var showNotFoundDialog by remember { mutableStateOf(false) }
+    var showUserExistsDialog by remember { mutableStateOf(false) }
+    var backgroundColor by remember { mutableStateOf(Color(sharedPreferences.getInt("background_color", Color.White.toArgb()))) }
 
     LaunchedEffect(Unit) {
         users.addAll(dbHelper.getAllUsers())
@@ -61,8 +62,15 @@ fun SegundaPantalla() {
         )
         Button(
             onClick = {
-                sharedPreferences.edit().putString("user_name", name).apply()
-                savedName = name
+                if (dbHelper.userExists(name)) {
+                    showUserExistsDialog = true
+                } else {
+                    dbHelper.insertUser(name, backgroundColor.toArgb())
+                    sharedPreferences.edit().putString("user_name", name).apply()
+                    savedName = name
+                    users.clear()
+                    users.addAll(dbHelper.getAllUsers())
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -76,16 +84,6 @@ fun SegundaPantalla() {
                 .fillMaxWidth()
                 .padding(bottom = 16.dp)
         )
-        Button(
-            onClick = {
-                dbHelper.insertUser(name)
-                users.clear()
-                users.addAll(dbHelper.getAllUsers())
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Guardar Datos del Usuario en SQLite")
-        }
         Button(
             onClick = {
                 showDialog = true
@@ -106,8 +104,12 @@ fun SegundaPantalla() {
         }
         Spacer(modifier = Modifier.height(16.dp))
         Text("Usuarios guardados en SQLite:", modifier = Modifier.padding(bottom = 8.dp))
-        users.forEach { user ->
-            Text(text = user, modifier = Modifier.padding(bottom = 4.dp))
+        users.forEach { (user, color, colorName) ->
+            Row(modifier = Modifier.padding(bottom = 4.dp)) {
+                Text(text = user, modifier = Modifier.weight(1f))
+                Box(modifier = Modifier.size(24.dp).background(Color(color)))
+                Text(text = colorName, modifier = Modifier.padding(start = 8.dp))
+            }
         }
     }
 
@@ -120,21 +122,19 @@ fun SegundaPantalla() {
                     Text("Introduce el nombre del usuario a borrar:")
                     TextField(
                         value = deleteName,
-                        onValueChange = { deleteName = it },
-                        label = { Text("Nombre") }
+                        onValueChange = { deleteName = it }
                     )
                 }
             },
             confirmButton = {
                 Button(
                     onClick = {
-                        if (users.contains(deleteName)) {
+                        if (dbHelper.userExists(deleteName)) {
                             dbHelper.deleteUser(deleteName)
                             users.clear()
                             users.addAll(dbHelper.getAllUsers())
                             showDialog = false
                         } else {
-                            showDialog = false
                             showNotFoundDialog = true
                         }
                     }
@@ -162,7 +162,21 @@ fun SegundaPantalla() {
             }
         )
     }
+
+    if (showUserExistsDialog) {
+        AlertDialog(
+            onDismissRequest = { showUserExistsDialog = false },
+            title = { Text("Usuario ya existe") },
+            text = { Text("El usuario con el nombre \"$name\" ya existe.") },
+            confirmButton = {
+                Button(onClick = { showUserExistsDialog = false }) {
+                    Text("Aceptar")
+                }
+            }
+        )
+    }
 }
+
 @Preview(showBackground = true)
 @Composable
 fun SegundaPantallaPreview() {
