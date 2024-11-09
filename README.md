@@ -1,6 +1,6 @@
 https://github.com/ffernandoss/taller3.git
 
-taller 3 eventos
+taller 3 eventos Fernando Santamaria
 
 en este taller he fusionado el boton de guardar con el de guardar en el SQLite ya que me parecia que hacia lo mismo, y he usado sharedPreferences y SQLite, pero no firebase ya que no sabia muy bien para que implementarlo en el ejercicio ya que todo se guardaba en el SQLite
 
